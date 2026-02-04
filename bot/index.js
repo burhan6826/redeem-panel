@@ -27,7 +27,7 @@ function createRequestEmbed(request) {
     .setTitle(`🔔 Redeem Request #${request.id}`)
     .addFields(
       { name: '👤 Client Name', value: request.name, inline: true },
-      { name: '🔑 Redeem Key', value: `\`${request.redeemKey}\``, inline: true },
+      { name: '🔑 Redeem Key', value: `||\`Click to reveal\`||`, inline: true },
       { name: '📧 Email', value: request.email, inline: false }
     );
 
@@ -39,7 +39,8 @@ function createRequestEmbed(request) {
   embed.addFields(
     { name: '🔗 Invite Link', value: request.inviteLink, inline: false },
     { name: '📊 Status', value: request.status, inline: true },
-    { name: '🕐 Timestamp', value: formatTimestamp(request.timestamp), inline: true }
+    { name: '🕐 Timestamp', value: formatTimestamp(request.timestamp), inline: true },
+    { name: '🔍 View Key', value: `Use \`/viewkey ${request.id}\` to see the actual key`, inline: false }
   );
 
   if (request.ipAddress) {
@@ -47,7 +48,7 @@ function createRequestEmbed(request) {
   }
 
   embed.setTimestamp()
-       .setFooter({ text: 'Redeem Panel Bot' });
+       .setFooter({ text: 'Redeem Panel Bot • Use /viewkey <id> to view keys' });
 
   return embed;
 }
@@ -156,6 +157,68 @@ async function checkForNewRequests() {
     }
   } catch (error) {
     console.error('Error checking for new requests:', error);
+  }
+}
+
+// Handle slash command interactions
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === 'viewkey') {
+    await handleViewKeyCommand(interaction);
+  }
+});
+
+// Handle /viewkey command
+async function handleViewKeyCommand(interaction) {
+  const requestId = interaction.options.getInteger('id');
+
+  try {
+    const request = await database.getRequestById(requestId);
+    
+    if (!request) {
+      const errorEmbed = new EmbedBuilder()
+        .setColor('#e74c3c')
+        .setTitle('❌ Request Not Found')
+        .setDescription(`No request found with ID: ${requestId}`)
+        .setTimestamp();
+
+      return await interaction.reply({ 
+        embeds: [errorEmbed], 
+        ephemeral: true 
+      });
+    }
+
+    const keyEmbed = new EmbedBuilder()
+      .setColor('#9333ea')
+      .setTitle('🔑 Redeem Key Information')
+      .addFields(
+        { name: 'Request ID', value: `#${request.id}`, inline: true },
+        { name: 'Client Name', value: request.name, inline: true },
+        { name: 'Status', value: request.status, inline: true },
+        { name: '🔑 Redeem Key', value: `\`${request.redeemKey}\``, inline: false }
+      )
+      .setTimestamp()
+      .setFooter({ text: 'Redeem Panel Bot' });
+
+    await interaction.reply({ 
+      embeds: [keyEmbed], 
+      ephemeral: true // Only visible to the person who used the command
+    });
+
+  } catch (error) {
+    console.error('Error handling viewkey command:', error);
+    
+    const errorEmbed = new EmbedBuilder()
+      .setColor('#e74c3c')
+      .setTitle('❌ Error')
+      .setDescription('An error occurred while fetching the request.')
+      .setTimestamp();
+
+    await interaction.reply({ 
+      embeds: [errorEmbed], 
+      ephemeral: true 
+    });
   }
 }
 

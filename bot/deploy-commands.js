@@ -1,9 +1,18 @@
-const { REST, Routes } = require('discord.js');
+require('dotenv').config();
+const { REST, Routes, SlashCommandBuilder } = require('discord.js');
 const { CLIENT_ID, GUILD_ID } = process.env;
 
-// No slash commands needed for this version
-// The bot works through database polling and button interactions
-const commands = [];
+const commands = [
+  new SlashCommandBuilder()
+    .setName('viewkey')
+    .setDescription('View the redeem key for a specific request (Admin only)')
+    .addIntegerOption(option =>
+      option.setName('id')
+        .setDescription('The request ID')
+        .setRequired(true)
+    )
+    .toJSON(),
+];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
