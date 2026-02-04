@@ -302,3 +302,5 @@ npm run deploy-commands
 ## License
 
 MIT License - feel free to use and modify for your projects.
+#   R e s t a r t   t r i g g e r  
+ 
