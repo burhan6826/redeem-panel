@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redeem Panel - Submit Your Request</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(147, 51, 234, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            animation: slideIn 0.6s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(15, 15, 30, 0.6);
+            border: 2px solid rgba(147, 51, 234, 0.2);
+            border-radius: 16px;
+            font-size: 1rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #9333ea;
+            background: rgba(15, 15, 30, 0.8);
+            box-shadow: 
+                0 0 0 4px rgba(147, 51, 234, 0.1),
+                0 0 20px rgba(147, 51, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-group input.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .error-message {
+            color: #f87171;
+            font-size: 0.875rem;
+            margin-top: 8px;
+            display: none;
+            font-weight: 400;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 10px 25px rgba(147, 51, 234, 0.3),
+                0 0 0 1px rgba(147, 51, 234, 0.2);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 35px rgba(147, 51, 234, 0.4),
+                0 0 0 1px rgba(147, 51, 234, 0.3);
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            background: #374151;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn.loading {
+            color: transparent;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 50%;
+            left: 50%;
+            margin-left: -12px;
+            margin-top: -12px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spinner 0.8s linear infinite;
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+            color: #22c55e;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 24px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .error-container {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            color: #f87171;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 24px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(147, 51, 234, 0.2);
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: #a855f7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #9333ea;
+        }
+
+        /* Glow effect on focus */
+        .form-group input:focus + .help-text {
+            color: #a855f7;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-group input {
+                padding: 14px 16px;
+            }
+
+            .submit-btn {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 30, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(147, 51, 234, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(147, 51, 234, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Redeem Your Order</h1>
+            <p>Enter your details to redeem your purchase</p>
+        </div>
+
+        <form id="redeemForm">
+            <div class="form-group">
+                <label for="redeemKey">Enter your key *</label>
+                <input 
+                    type="text" 
+                    id="redeemKey" 
+                    name="redeemKey" 
+                    required 
+                    placeholder="Enter your key"
+                    maxlength="100"
+                >
+                <div class="error-message" id="redeemKeyError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="inviteLink">Server Invite *</label>
+                <input 
+                    type="url" 
+                    id="inviteLink" 
+                    name="inviteLink" 
+                    required 
+                    placeholder="Server Invite"
+                >
+                <div class="error-message" id="inviteLinkError"></div>
+                <div class="help-text">Must be a valid Discord.gg invite link</div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Client Name *</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    required 
+                    placeholder="Enter your name"
+                    maxlength="100"
+                >
+                <div class="error-message" id="nameError"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Redeem Now
+            </button>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            ✅ Your request has been received. Please wait while we process your order.
+        </div>
+
+        <div class="error-container" id="errorContainer">
+            <strong>Error:</strong> <span id="errorMessage"></span>
+        </div>
+
+        <div class="footer">
+            <p>Can't find your redeem key? <a href="#">Check your email & invoice page.</a></p>
+            <p>© novaboosts.cc • All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('redeemForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Reset error states
+            document.querySelectorAll('.form-group input').forEach(input => {
+                input.classList.remove('error');
+            });
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+
+            // Validate name
+            const name = document.getElementById('name').value.trim();
+            if (name.length < 1 || name.length > 100) {
+                showFieldError('name', 'Name must be between 1 and 100 characters');
+                isValid = false;
+            }
+
+            // Validate redeem key
+            const redeemKey = document.getElementById('redeemKey').value.trim();
+            const keyRegex = /^[a-zA-Z0-9\-_]+$/;
+            if (redeemKey.length < 1 || redeemKey.length > 100) {
+                showFieldError('redeemKey', 'Redeem key must be between 1 and 100 characters');
+                isValid = false;
+            } else if (!keyRegex.test(redeemKey)) {
+                showFieldError('redeemKey', 'Redeem key can only contain letters, numbers, hyphens, and underscores');
+                isValid = false;
+            }
+
+            // Validate invite link
+            const inviteLink = document.getElementById('inviteLink').value.trim();
+            const discordRegex = /^https:\/\/discord\.gg\/[a-zA-Z0-9]+$/;
+            if (!inviteLink) {
+                showFieldError('inviteLink', 'Invite link is required');
+                isValid = false;
+            } else if (!discordRegex.test(inviteLink)) {
+                showFieldError('inviteLink', 'Must be a valid Discord.gg invite link');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(fieldName, message) {
+            const field = document.getElementById(fieldName);
+            const errorElement = document.getElementById(fieldName + 'Error');
+            
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorContainer.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            // Scroll to error
+            errorContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showSuccess() {
+            successMessage.style.display = 'block';
+            errorContainer.style.display = 'none';
+            form.style.display = 'none';
+            
+            // Scroll to success message
+            successMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            if (loading) {
+                submitBtn.classList.add('loading');
+                submitBtn.textContent = 'Processing...';
+            } else {
+                submitBtn.classList.remove('loading');
+                submitBtn.textContent = 'Submit Request';
+            }
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                redeemKey: document.getElementById('redeemKey').value.trim(),
+                inviteLink: document.getElementById('inviteLink').value.trim()
+            };
+
+            setLoading(true);
+            errorContainer.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/redeem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess();
+                    console.log('Request submitted successfully:', data.requestId);
+                } else {
+                    showError(data.message || 'An error occurred while submitting your request.');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('Network error. Please check your connection and try again.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Real-time validation
+        document.getElementById('name').addEventListener('input', function() {
+            if (this.value.trim().length >= 1 && this.value.trim().length <= 100) {
+                this.classList.remove('error');
+                document.getElementById('nameError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('redeemKey').addEventListener('input', function() {
+            const keyRegex = /^[a-zA-Z0-9\-_]*$/;
+            if (keyRegex.test(this.value) && this.value.trim().length >= 1 && this.value.trim().length <= 100) {
+                this.classList.remove('error');
+                document.getElementById('redeemKeyError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('inviteLink').addEventListener('input', function() {
+            const discordRegex = /^https:\/\/discord\.gg\/[a-zA-Z0-9]*$/;
+            if (discordRegex.test(this.value)) {
+                this.classList.remove('error');
+                document.getElementById('inviteLinkError').style.display = 'none';
+            }
+        });
+
+        // Auto-format Discord invite link
+        document.getElementById('inviteLink').addEventListener('blur', function() {
+            let value = this.value.trim();
+            if (value && !value.startsWith('https://discord.gg/')) {
+                if (value.startsWith('discord.gg/')) {
+                    this.value = 'https://' + value;
+                } else if (!value.startsWith('http')) {
+                    this.value = 'https://discord.gg/' + value;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
