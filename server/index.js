@@ -119,15 +119,14 @@ app.post('/api/redeem-order/:id', validateRedeemRequest, async (req, res) => {
       });
     }
 
-    // Create redeem request with order ID
+    // Create redeem request
     const requestId = await database.createRequest({
       name,
       redeemKey,
       inviteLink,
       email,
       ipAddress,
-      userAgent,
-      orderId: orderId // Store the order ID
+      userAgent
     });
 
     // Mark key as used

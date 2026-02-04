@@ -34,6 +34,8 @@ function createRequestEmbed(request) {
   // Add Order ID if it exists
   if (request.orderId) {
     embed.addFields({ name: '🛒 Order ID', value: request.orderId, inline: true });
+  } else {
+    embed.addFields({ name: '🛒 Order ID', value: 'N/A', inline: true });
   }
 
   embed.addFields(

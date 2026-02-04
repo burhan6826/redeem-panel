@@ -116,13 +116,13 @@ class Database {
   // Create a new redeem request
   async createRequest(requestData) {
     return new Promise((resolve, reject) => {
-      const { name, redeemKey, inviteLink, email, ipAddress, userAgent, orderId } = requestData;
+      const { name, redeemKey, inviteLink, email, ipAddress, userAgent } = requestData;
       
       this.db.run(
         `INSERT INTO redeem_requests 
-         (name, redeemKey, inviteLink, email, ipAddress, userAgent, orderId) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [name, redeemKey, inviteLink, email, ipAddress, userAgent, orderId],
+         (name, redeemKey, inviteLink, email, ipAddress, userAgent) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [name, redeemKey, inviteLink, email, ipAddress, userAgent],
         function(err) {
           if (err) {
             reject(err);
